@@ -148,7 +148,7 @@ clone_all() {
 }
 
 # 设置编译源码与分支
-REPO_URL="https://github.com/8688Add/immortalwrt"
+REPO_URL="https://github.com/immortalwrt/immortalwrt"
 echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
 REPO_BRANCH="master"
 echo "REPO_BRANCH=$REPO_BRANCH" >>$GITHUB_ENV
@@ -258,11 +258,8 @@ git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
 #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
 sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
 
-# 晶晨宝盒
-#clone_all https://github.com/ophub/luci-app-amlogic
-#sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/$GITHUB_REPOSITORY'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
-# sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
-#sed -i "s|ARMv8|$RELEASE_TAG|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+# unblockneteasemusic
+sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applications/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
 # 开始加载个人设置
 begin_time=$(date '+%H:%M:%S')
