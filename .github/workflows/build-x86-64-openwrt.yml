@@ -39,12 +39,12 @@ on:
         default: true
         type: boolean
 
-      openclash:
-        description: '预设openclash内核'
-        required: false
-        default: 'amd64'
-        type: choice
-        options: [false, amd64, arm64, armv7, armv6, armv5, 386]
+      #openclash:
+        #description: '预设openclash内核'
+        #required: false
+        #default: 'amd64'
+        #type: choice
+        #options: [false, amd64, arm64, armv7, armv6, armv5, 386]
 
       artifact:
         description: '上传固件到Artifact'
