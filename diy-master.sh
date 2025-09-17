@@ -148,7 +148,7 @@ clone_all() {
 }
 
 # 设置编译源码与分支
-REPO_URL="https://github.com/immortalwrt/immortalwrt"
+REPO_URL="https://github.com/8688Add/immortalwrt"
 echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
 REPO_BRANCH="master"
 echo "REPO_BRANCH=$REPO_BRANCH" >>$GITHUB_ENV
