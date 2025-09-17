@@ -249,12 +249,7 @@ clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
 
 # 科学上网插件
 rm -rf feeds/luci/applications/luci-app-openclash
-#clone_dir master https://github.com/vernesong/OpenClash luci-app-openclash
 clone_dir dev https://github.com/vernesong/OpenClash luci-app-openclash
-# 编译 po2lmo (如果有po2lmo可跳过)
-pushd feeds/luci/applications/luci-app-openclash/tools/po2lmo
-make && sudo make install
-popd
 
 # partexp
 git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
