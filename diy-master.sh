@@ -249,7 +249,12 @@ clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
 
 # 科学上网插件
 rm -rf feeds/luci/applications/luci-app-openclash
-git_clone --depth=1 -b dev https://github.com/vernesong/OpenClash package/OpenClash
+#clone_dir master https://github.com/vernesong/OpenClash luci-app-openclash
+clone_dir dev https://github.com/vernesong/OpenClash luci-app-openclash
+# 编译 po2lmo (如果有po2lmo可跳过)
+pushd feeds/luci/applications/luci-app-openclash/tools/po2lmo
+make && sudo make install
+popd
 
 # partexp
 git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
@@ -317,7 +322,7 @@ sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/
 
 # 自定义默认配置
 sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
-cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
+#cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
 curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/immortalwrt/10_system.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 curl -fsSL https://raw.githubusercontent.com/0118Add/X86-N1-Actions/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
 #curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/immortalwrt/29_ports.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
@@ -348,8 +353,8 @@ status "加载个人设置"
 # 开始下载openchash运行内核
 #[[ $CLASH_KERNEL =~ amd64|arm64|armv7|armv6|armv5|386 ]] && {
 #    begin_time=$(date '+%H:%M:%S')
-##    chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
-    $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CLASH_KERNEL
+#    chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
+#    $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CLASH_KERNEL
 #    status "下载openchash运行内核"
 #}
 
