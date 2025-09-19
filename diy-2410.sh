@@ -237,8 +237,8 @@ color cy "添加&替换插件"
 # 添加额外插件
 #clone_dir openwrt-23.05 https://github.com/coolsnowwolf/luci luci-app-adguardhome
 #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
-sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+#sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+#sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
 clone_all https://github.com/nikkinikki-org/OpenWrt-momo
 #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
@@ -313,7 +313,7 @@ sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/
 sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
 
 # 自定义默认配置
-#sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
+sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
 #cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
 curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/patch/10_system.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 curl -fsSL https://raw.githubusercontent.com/0118Add/X86-N1-Actions/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
