@@ -8,7 +8,7 @@ on:
         required: true
         default: 'master'
         type: choice
-        options: [master, 23.05]
+        options: [master, 24.10, 23.05]
 
       target:
         description: '选择要编译的机型'
