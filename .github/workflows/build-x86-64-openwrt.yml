@@ -49,7 +49,7 @@ on:
       artifact:
         description: '上传固件到Artifact'
         required: false
-        default: true
+        default: false
         type: boolean
 
       release:
