@@ -269,7 +269,7 @@ sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applicati
 # sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
 #sed -i "s|ARMv8|$RELEASE_TAG|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
 
-# 开始加载个人设置
+# 加载个人设置
 begin_time=$(date '+%H:%M:%S')
 
 [ -e $GITHUB_WORKSPACE/files ] && mv $GITHUB_WORKSPACE/files files
