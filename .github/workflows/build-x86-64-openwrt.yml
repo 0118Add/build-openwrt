@@ -8,7 +8,7 @@ on:
         required: true
         default: '18.06'
         type: choice
-        options: [18.06, 23.05]
+        options: [master, 23.05, 2410]
 
       target:
         description: '选择要编译的机型'
@@ -20,7 +20,7 @@ on:
       ip:
         description: '设置默认登录IP'
         required: false
-        default: '10.0.0.2'
+        default: '10.0.0.1'
 
       partsize:
         description: '设置rootfs大小'
@@ -39,12 +39,12 @@ on:
         default: true
         type: boolean
 
-      openclash:
-        description: '预设openclash内核'
-        required: false
-        default: 'amd64'
-        type: choice
-        options: [false, amd64, arm64, armv7, armv6, armv5, 386]
+      #openclash:
+        #description: '预设openclash内核'
+        #required: false
+        #default: 'amd64'
+        #type: choice
+        #options: [false, amd64, arm64, armv7, armv6, armv5, 386]
 
       artifact:
         description: '上传固件到Artifact'
