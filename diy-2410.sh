@@ -151,7 +151,7 @@ echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
 REPO_BRANCH="openwrt-24.10"
 echo "REPO_BRANCH=$REPO_BRANCH" >>$GITHUB_ENV
 
-# 开始拉取编译源码
+# 拉取编译源码
 begin_time=$(date '+%H:%M:%S')
 [[ $REPO_BRANCH != "master" ]] && BRANCH="-b $REPO_BRANCH --single-branch"
 cd /workdir
@@ -161,7 +161,7 @@ ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 [ -d openwrt ] && cd openwrt || exit
 echo "OPENWRT_PATH=$PWD" >>$GITHUB_ENV
 
-# 开始生成全局变量
+# 生成全局变量
 begin_time=$(date '+%H:%M:%S')
 [ -e $GITHUB_WORKSPACE/$CONFIG_FILE ] && cp -f $GITHUB_WORKSPACE/$CONFIG_FILE .config
 make defconfig 1>/dev/null 2>&1
