@@ -186,7 +186,7 @@ jobs:
         cat config.buildinfo
         cp -rf $OPENWRT_PATH/bin/packages/* packages
         tar -zcf packages.tar.gz packages
-        sleep 3s && rm -rf packages sha256sums *.buildinfo *.bin *.json *rootfs.img.gz
+        sleep 3s && rm -rf packages sha256sums *.buildinfo *.bin *.json *rootfs.img.gz *.manifest *combined.img.gz
         sed '/^$/d' $OPENWRT_PATH/.config >config.txt
         echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
 
