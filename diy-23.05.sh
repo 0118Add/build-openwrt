@@ -201,7 +201,7 @@ status "生成全局变量"
 # 下载并部署Toolchain
 if [[ $TOOLCHAIN = 'true' ]]; then
     cache_xa=$(curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
-    cache_xc=$(curl -sL api.github.com/repos/haiibo/toolchain-cache/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
+    cache_xc=$(curl -sL api.github.com/repos/Jejz168/toolchain-cache/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
     if [[ $cache_xa || $cache_xc ]]; then
         begin_time=$(date '+%H:%M:%S')
         [ $cache_xa ] && wget -qc -t=3 $cache_xa || wget -qc -t=3 $cache_xc
