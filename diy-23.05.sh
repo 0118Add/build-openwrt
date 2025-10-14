@@ -300,7 +300,7 @@ sed -i "s/hostname='.*'/hostname='ImmortalWrt'/g" package/base-files/files/bin/c
 
 # 更改固件版本信息
 sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION=''|g" package/base-files/files/etc/openwrt_release
-sed -i "s|DISTRIB_DESCRIPTION='.*'|DISTRIB_DESCRIPTION='ImmortalWrt 23.05.6 / LuCI openwrt-23.05'|g" package/base-files/files/etc/openwrt_release
+sed -i "s|DISTRIB_DESCRIPTION='.*'|DISTRIB_DESCRIPTION='OpenWrt 23.05.6 / LuCI openwrt-23.05'|g" package/base-files/files/etc/openwrt_release
 
 # 删除主题默认设置
 # find $destination_dir/luci-theme-*/ -type f -name '*luci-theme-*' -print -exec sed -i '/set luci.main.mediaurlbase/d' {} \;
