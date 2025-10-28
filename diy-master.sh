@@ -243,8 +243,8 @@ clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
 
 #clone_all https://github.com/sbwml/luci-app-alist
 #clone_all https://github.com/sbwml/luci-app-mosdns
-rm -rf feeds/packages/net/{xray-core,sing-box}
-clone_dir v5 https://github.com/sbwml/openwrt_helloworld sing-box xray-core
+#rm -rf feeds/packages/net/{xray-core,sing-box}
+#clone_dir v5 https://github.com/sbwml/openwrt_helloworld sing-box xray-core
 
 # 科学上网插件
 rm -rf feeds/luci/applications/luci-app-openclash
