@@ -234,7 +234,7 @@ color cy "添加&替换插件"
 
 # golang 1.25
 rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 25.x feeds/packages/lang/golang
+clone_dir 25.x https://github.com/sbwml/packages_lang_golang
 
 # 移除重复软件包
 rm -rf feeds/other/lean/autocore
@@ -260,16 +260,16 @@ rm -rf target/linux/generic/hack-6.6/952-add-net-conntrack-events-support-multip
 git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
 #sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
 #sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
-git clone https://github.com/8688Add/autocore-arm -b openwrt-24.10 package/autocore
+git_clone https://github.com/nikkinikki-org/OpenWrt-nikki
+clone_dir openwrt-24.10 https://github.com/8688Add/autocore-arm
 
 # 科学上网插件
 rm -rf feeds/luci/applications/luci-app-openclash
 clone_dir dev https://github.com/vernesong/OpenClash luci-app-openclash
 
 # partexp filemanager
-git clone https://github.com/sbwml/luci-app-filemanager package/luci-app-filemanager
-git clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
+git_clone https://github.com/sbwml/luci-app-filemanager
+git_clone https://github.com/sirpdboy/luci-app-partexp
 
 # turboacc
 #git clone https://github.com/chenmozhijin/turboacc package/new/luci-app-turboacc
@@ -331,7 +331,7 @@ fi
 sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.::0:99999:7:::/g' package/base-files/files/etc/shadow
 
 # 替换banner
-wget -O ./package/base-files/files/etc/banner https://raw.githubusercontent.com/0118Add/X86_64-Test/main/general/banner
+#wget -O ./package/base-files/files/etc/banner https://raw.githubusercontent.com/0118Add/X86_64-Test/main/general/banner
 
 # 添加编译日期
 #echo "DISTRIB_DATE='R$(date +%y.%-m.%-d)'" >>package/base-files/files/etc/openwrt_release
