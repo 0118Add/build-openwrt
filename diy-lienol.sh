@@ -257,9 +257,9 @@ rm -rf target/linux/generic/hack-6.6/952-add-net-conntrack-events-support-multip
 
 # 添加额外插件
 #clone_dir openwrt-23.05 https://github.com/coolsnowwolf/luci luci-app-adguardhome
-#git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
-sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+#sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+#sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
 git clone https://github.com/8688Add/autocore-arm -b openwrt-24.10 package/autocore
 
@@ -317,9 +317,6 @@ fi
 
 # 修改默认IP
 [ $DEFAULT_IP ] && sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' package/base-files/files/bin/config_generate
-
-# 替换内核
-sed -i 's/KERNEL_PATCHVER:=6.6/KERNEL_PATCHVER:=6.12/g' target/linux/x86/Makefile
 
 # 更改默认 Shell 为 zsh
 # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
@@ -386,6 +383,9 @@ for e in $(ls -d $destination_dir/luci-*/po feeds/luci/applications/luci-*/po); 
     fi
 done
 status "加载个人设置"
+
+# 替换内核
+sed -i 's/KERNEL_PATCHVER:=6.6/KERNEL_PATCHVER:=6.12/g' target/linux/x86/Makefile
 
 # 更新配置文件
 begin_time=$(date '+%H:%M:%S')
