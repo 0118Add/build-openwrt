@@ -154,7 +154,7 @@ echo "REPO_BRANCH=$REPO_BRANCH" >>$GITHUB_ENV
 # 拉取编译源码
 begin_time=$(date '+%H:%M:%S')
 [[ $REPO_BRANCH != "master" ]] && BRANCH="-b $REPO_BRANCH --single-branch"
-cd /workdir
+
 git clone -q $BRANCH $REPO_URL openwrt
 status "拉取编译源码"
 ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
