@@ -1,24 +1,48 @@
 name: build x86/64 openwrt
 
 on:
+  workflow_call:
+    inputs:
+      source:
+        required: true
+        type: string
+      target:
+        required: true
+        type: string
+      ip_address:
+        required: true
+        type: string
+      partsize:
+        required: true
+        type: string
+      toolchain:
+        required: true
+        type: string
+      artifact:
+        required: true
+        type: string
+      release:
+        required: true
+        type: string
+
   workflow_dispatch:
     inputs:
       source:
-        description: '选择要编译的LUCI版本'
+        description: '选择要编译的源码'
         required: true
-        default: '18.06'
+        default: 'immwrt'
         type: choice
-        options: [master, 23.05, 2410, 25.12]
+        options: ['master', '23.05', '2410', '25.12']
 
       target:
         description: '选择要编译的机型'
         required: true
         default: 'x86-64'
         type: choice
-        options: [x86-64]
+        options: ['x86-64']
 
-      ip:
-        description: '设置默认登录IP'
+      ip_address:
+        description: '设置默认IP地址'
         required: false
         default: '10.0.0.1'
 
@@ -33,23 +57,10 @@ on:
         default: true
         type: boolean
 
-      zsh_tool:
-        description: '预设zsh终端工具'
-        required: false
-        default: true
-        type: boolean
-
-      #openclash:
-        #description: '预设openclash内核'
-        #required: false
-        #default: 'amd64'
-        #type: choice
-        #options: [false, amd64, arm64, armv7, armv6, armv5, 386]
-
       artifact:
         description: '上传固件到Artifact'
         required: false
-        default: false
+        default: true
         type: boolean
 
       release:
@@ -60,147 +71,137 @@ on:
 
 jobs:
   build:
+    name: build ${{inputs.target}} ${{inputs.source}}
     runs-on: ubuntu-24.04
-    name: build ${{ github.event.inputs.target }} ${{ github.event.inputs.source }}
 
     env:
-      DEFAULT_IP: ${{ github.event.inputs.ip }}
-      PART_SIZE: ${{ github.event.inputs.partsize }}
-      TOOLCHAIN: ${{ github.event.inputs.toolchain }}
-      ZSH_TOOL: ${{ github.event.inputs.zsh_tool }}
-      CLASH_KERNEL: ${{ github.event.inputs.openclash }}
-      CONFIG_FILE: configs/${{ github.event.inputs.target }}-${{ github.event.inputs.source }}.config
-      DIY_SCRIPT: diy-${{ github.event.inputs.source }}.sh
-      RELEASE_TAG: ${{ github.event.inputs.target }}-${{ github.event.inputs.source }}
-      TOOLCHAIN_TAG: toolchain
-      UPLOAD_BIN_DIR: false
+      IP_ADDRESS: ${{inputs.ip_address}}
+      PART_SIZE: ${{inputs.partsize}}
+      TOOLCHAIN: ${{inputs.toolchain}}
+      CONFIG_FILE: configs/${{inputs.target}}-${{inputs.source}}.config
+      DIY_SCRIPT: ${{inputs.source}}.sh
+      RELEASE_TAG: ${{inputs.target}}-${{inputs.source}}
+      UPLOAD_ARTIFACT: ${{inputs.artifact}}
+      UPLOAD_RELEASE: ${{inputs.release}}
       TZ: Asia/Shanghai
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@main
+      - name: Checkout
+        uses: actions/checkout@main
 
-    - name: Show system
-      run: |
-        echo -e "Total CPU cores\t: $(nproc)"
-        cat /proc/cpuinfo | grep 'model name'
+      - name: Show system
+        run: |
+          echo -e "Total CPU cores\t: $(nproc)"
+          cat /proc/cpuinfo | grep 'model name'
 
-    - name: Initialization Environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        docker rmi -f $(docker images -q) 2>/dev/null || true
-        sudo rm -rf /usr/share/dotnet /usr/local/lib/android $AGENT_TOOLSDIRECTORY
-        sudo swapoff -a && sudo rm -f /swapfile /mnt/swapfile
-        sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
-        sudo -E apt-get -y update
-        sudo -E apt-get -y install $(curl -fsSL is.gd/depends_ubuntu_2404)
-        sudo -E systemctl daemon-reload
-        sudo -E apt-get -y autoremove --purge
-        sudo -E apt-get -y clean
-        sudo timedatectl set-timezone "$TZ"
+      - name: Initialization Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi -f $(docker images -q) 2>/dev/null || true
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android $AGENT_TOOLSDIRECTORY
+          sudo swapoff -a && sudo rm -f /swapfile /mnt/swapfile
+          sudo -E apt -yqq purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
+          sudo -E apt -yqq update
+          sudo -E apt -yqq install $(curl -fsSL is.gd/depends_ubuntu_2404)
+          sudo -E apt -yqq autoremove --purge
+          sudo -E apt -yqq autoclean
+          sudo -E apt -yqq clean
+          sudo -E systemctl daemon-reload
+          sudo timedatectl set-timezone "$TZ"
 
-    - name: Load Compile Script
-      run: chmod +x $DIY_SCRIPT && ./$DIY_SCRIPT
+      - name: Load Custom Script
+        run: chmod +x $DIY_SCRIPT && ./$DIY_SCRIPT
 
-    - name: Compile Toolchain
-      if: env.REBUILD_TOOLCHAIN == 'true'
-      id: toolchain
-      run: |
-        cd $OPENWRT_PATH
-        make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
-        $GITHUB_WORKSPACE/$DIY_SCRIPT
+      - name: Compile Toolchain
+        if: env.REBUILD_TOOLCHAIN == 'true'
+        id: toolchain
+        run: |
+          cd $OPENWRT_PATH
+          make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
+          $GITHUB_WORKSPACE/$DIY_SCRIPT
 
-    - name: Delete Old Toolchain
-      if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
-      uses: mknejp/delete-release-assets@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ env.TOOLCHAIN_TAG }}
-        assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}*'
-        fail-if-no-assets: false
-        fail-if-no-release: false
+      - name: Delete Old Toolchain
+        if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
+        uses: mknejp/delete-release-assets@v1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          tag: toolchain-cache
+          assets: '${{env.SOURCE_REPO}}-${{env.LITE_BRANCH}}-${{env.DEVICE_TARGET}}*'
+          fail-if-no-assets: false
+          fail-if-no-release: false
 
-    - name: Upload Toolchain To Release
-      if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
-      uses: softprops/action-gh-release@v2
-      with:
-        name: toolchain-cache
-        tag_name: ${{ env.TOOLCHAIN_TAG }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: output/*
-        body: OpenWrt 工具链缓存
+      - name: Upload Toolchain To Release
+        if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: toolchain-cache
+          tag_name: toolchain-cache
+          token: ${{secrets.GITHUB_TOKEN}}
+          files: output/*
+          body: OpenWrt 工具链缓存
 
-    - name: Download DL Package
-      run: |
-        cd $OPENWRT_PATH
-        # make download -j$(nproc)
-        make package/download -j$(nproc)
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
+      - name: Download DL Packages
+        run: |
+          cd $OPENWRT_PATH
+          # make download -j$(nproc)
+          make package/download -j$(nproc)
 
-    - name: Compile Firmware
-      id: compile
-      run: |
-        cd $OPENWRT_PATH
-        mkdir -p files/etc/uci-defaults
-        cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
-        echo "FILE_DATE=$(date +"%Y.%m.%d")" >>$GITHUB_ENV
-        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >>$GITHUB_ENV
+      - name: Compile Firmware
+        id: compile
+        run: |
+          cd $OPENWRT_PATH
+          mkdir -p files/etc/uci-defaults
+          cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
+          echo -e "$(nproc) thread compile"
+          make -j$(nproc) || make -j1 V=s
+          echo "FILE_DATE=$(date +"%Y.%m.%d")" >>$GITHUB_ENV
+          echo "DATE=$(date +"%Y.%m.%d-%H:%M:%S")" >>$GITHUB_ENV
 
-    - name: Upload Bin Directory
-      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      uses: actions/upload-artifact@main
-      with:
-        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-bin-${{ env.FILE_DATE }}
-        path: ${{ env.OPENWRT_PATH }}/bin
+      - name: Organize Files
+        if: steps.compile.conclusion == 'success'
+        run: |
+          df -h && cd $OPENWRT_PATH
+          du -h --max-depth=1
+          echo "==============================="
+          cd $OPENWRT_PATH/bin/targets/*/* && ls
+          echo "==============================="
+          sed '/^$/d' $OPENWRT_PATH/.config >config.txt
+          cat config.buildinfo
+          cp -rf $OPENWRT_PATH/bin/packages/* packages
+          tar -zcf packages.tar.gz packages
+          sleep 3s && rm -rf packages sha256sums *.buildinfo *.bin *.json *rootfs.img.gz
+          echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
 
-    - name: Organize Files
-      if: steps.compile.conclusion == 'success'
-      run: |
-        df -hT
-        echo "==============================="
-        ls $OPENWRT_PATH/bin/targets/*/*
-        echo "==============================="
-        cd $OPENWRT_PATH/bin/targets/*/*
-        cat config.buildinfo
-        cp -rf $OPENWRT_PATH/bin/packages/* packages
-        tar -zcf packages.tar.gz packages
-        sleep 3s && rm -rf packages sha256sums *.buildinfo *.bin *.json *rootfs.img.gz *.manifest *combined.img.gz
-        sed '/^$/d' $OPENWRT_PATH/.config >config.txt
-        echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
+      - name: Upload Firmware To Artifact
+        if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true'
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{env.SOURCE_REPO}}-${{env.LITE_BRANCH}}-${{env.DEVICE_TARGET}}-firmware-${{env.FILE_DATE}}
+          path: ${{env.FIRMWARE_PATH}}
 
-    - name: Upload Firmware To Artifact
-      if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true'
-      uses: actions/upload-artifact@main
-      with:
-        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-firmware-${{ env.FILE_DATE }}
-        path: ${{ env.FIRMWARE_PATH }}
-
-    - name: Upload Firmware To Release
-      if: steps.compile.conclusion == 'success' && github.event.inputs.release == 'true'
-      uses: ncipollo/release-action@main
-      with:
-        name: ${{ env.DATE }} for ${{ env.DEVICE_TARGET }}
-        allowUpdates: true
-        removeArtifacts: true
-        tag: ${{ env.RELEASE_TAG }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ${{ env.FIRMWARE_PATH }}/*
-        body: |
-          **This is ${{ env.SOURCE_REPO }} firmware for ${{ env.DEVICE_TARGET }}**
-          ### 📒 固件信息
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}
-          - ⚽ 固件源码: ${{ env.REPO_URL }}
-          - 💝 源码分支: ${{ env.REPO_BRANCH }}
-          - 🚀 内核版本: ${{ env.KERNEL_VERSION }}
-          - 🌐 默认地址: ${{ env.DEFAULT_IP }}
-          - 🔑 默认密码: password
-          ### 🧊 固件版本
-          - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
-          - ${{ env.COMMIT_AUTHOR }}
-          - ${{ env.COMMIT_DATE }}
-          - ${{ env.COMMIT_MESSAGE }}
-          - ${{ env.COMMIT_HASH }}
+      - name: Upload Firmware To Release
+        if: steps.compile.conclusion == 'success' && env.UPLOAD_RELEASE == 'true'
+        uses: ncipollo/release-action@main
+        with:
+          name: ${{env.RELEASE_TAG}}-${{env.DATE}}
+          allowUpdates: true
+          removeArtifacts: true
+          tag: ${{env.RELEASE_TAG}}
+          token: ${{secrets.GITHUB_TOKEN}}
+          artifacts: ${{env.FIRMWARE_PATH}}/*
+          body: |
+            **This is ${{env.SOURCE_REPO}} firmware for ${{env.DEVICE_TARGET}}**
+            ### 📒 固件信息
+            - 💻 平台架构: ${{env.DEVICE_TARGET}}
+            - ⚽ 固件源码: ${{env.REPO_URL}}
+            - 💝 源码分支: ${{env.REPO_BRANCH}}
+            - 🚀 内核版本: ${{env.KERNEL_VERSION}}
+            - 🌐 默认地址: ${{env.IP_ADDRESS}}
+            - 🔑 默认密码: password
+            ### 🧊 固件版本
+            - 固件编译前最后一次➦[主源码](${{env.REPO_URL}})更新记录
+            - ${{env.COMMIT_AUTHOR}}
+            - ${{env.COMMIT_DATE}}
+            - ${{env.COMMIT_MESSAGE}}
+            - ${{env.COMMIT_HASH}}
