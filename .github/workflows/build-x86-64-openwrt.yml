@@ -19,7 +19,7 @@ on:
         required: true
         type: string
       artifact:
-        required: false
+        required: true
         type: string
       release:
         required: true
@@ -60,7 +60,7 @@ on:
       artifact:
         description: '上传固件到Artifact'
         required: false
-        default: true
+        default: false
         type: boolean
 
       release:
