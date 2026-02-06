@@ -174,7 +174,7 @@ jobs:
           echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
 
       - name: Upload Firmware To Artifact
-        if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true'
+        if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'false'
         uses: actions/upload-artifact@main
         with:
           name: ${{env.SOURCE_REPO}}-${{env.LITE_BRANCH}}-${{env.DEVICE_TARGET}}-firmware-${{env.FILE_DATE}}
