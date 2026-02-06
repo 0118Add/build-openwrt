@@ -19,7 +19,7 @@ on:
         required: true
         type: string
       artifact:
-        required: true
+        required: false
         type: string
       release:
         required: true
@@ -30,7 +30,7 @@ on:
       source:
         description: '选择要编译的源码'
         required: true
-        default: 'immwrt'
+        default: 'master'
         type: choice
         options: ['master', '23.05', '2410', '25.12']
 
@@ -174,7 +174,7 @@ jobs:
           echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
 
       - name: Upload Firmware To Artifact
-        if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'false'
+        if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true'
         uses: actions/upload-artifact@main
         with:
           name: ${{env.SOURCE_REPO}}-${{env.LITE_BRANCH}}-${{env.DEVICE_TARGET}}-firmware-${{env.FILE_DATE}}
