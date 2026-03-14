@@ -314,15 +314,17 @@ add_custom_packages() {
     #clone_all https://github.com/brvphoenix/wrtbwmon
 
     # 科学上网插件
+    rm -rf feeds/packages/net/{xray-core,sing-box}
+    git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages -b main
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
     #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
-    git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+    git_clone https://github.com/immortalwrt/homeproxy package/luci-app-homeproxy
     git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
 
-    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    sed -i "s/ImmortalWrt/OpenWrt/g" package/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
     
     # partexp
     git clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
@@ -433,6 +435,7 @@ apply_custom_settings() {
     curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/patch/release-os > package/base-files/files/etc/os-release
     
     rm -rf feeds/packages/net/onionshare-cli
+    rm -rf feeds/luci/applications/luci-app-mjpg-streamer
     rm -rf feeds/luci/applications/luci-app-advanced-reboot
     sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile
     
