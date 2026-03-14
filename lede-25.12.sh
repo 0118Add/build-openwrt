@@ -317,10 +317,10 @@ add_custom_packages() {
     rm -rf feeds/packages/lang/{golang,node}
     rm -rf feeds/packages/net/{xray-core,sing-box}
     rm -rf feeds/luci/applications/{luci-app-filemanager,luci-app-dockerman,luci-app-advanced-reboot,luci-app-mjpg-streamer}
-    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
     #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
+    clone_dir https://github.com/Openwrt-Passwall/openwrt-passwall-packages sing-box xray-core
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
     clone_dir https://github.com/sbwml/openwrt_pkgs rtp2httpd luci-app-rtp2httpd
     git_clone https://github.com/8688Add/autocore package/autocore
