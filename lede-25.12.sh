@@ -242,7 +242,7 @@ set_variable_values() {
     TARGET_NAME=$(grep -oP "^CONFIG_TARGET_\K[a-z0-9]+(?==y)" "$GITHUB_WORKSPACE/$CONFIG_FILE")
     SUBTARGET_NAME=$(grep -oP "^CONFIG_TARGET_${TARGET_NAME}_\K[a-z0-9]+(?==y)" "$GITHUB_WORKSPACE/$CONFIG_FILE")
     DEVICE_TARGET="$TARGET_NAME-$SUBTARGET_NAME"
-    echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
+    echo "DEVICE_TARGET=$DEVICE_TARGET" >>$GITHUB_ENV
 
     # 内核版本
     KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
