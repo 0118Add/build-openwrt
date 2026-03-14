@@ -315,7 +315,6 @@ add_custom_packages() {
 
     # 科学上网插件
     rm -rf feeds/packages/lang/{golang,node}
-    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
     rm -rf feeds/packages/net/{xray-core,sing-box}
     rm -rf feeds/luci/applications/{luci-app-filemanager,luci-app-dockerman,luci-app-advanced-reboot,luci-app-mjpg-streamer}
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
@@ -326,21 +325,17 @@ add_custom_packages() {
     git_clone https://github.com/8688Add/autocore package/autocore
     #git_clone https://github.com/sbwml/autocore-arm -b openwrt-25.12 package/autocore    
     git_clone https://github.com/sbwml/default-settings package/default-settings
-    git_clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
-    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt -b packages-24.10 feeds/packages/lang/node
-    git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
-    git_clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git_clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git_clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git_clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
+    git_clone https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
+    git_clone https://github.com/sbwml/luci-app-dockerman package/luci-app-dockerman
     git_clone https://github.com/immortalwrt/homeproxy package/luci-app-homeproxy
     git_clone https://github.com/sbwml/luci-app-filemanager package/luci-app-filemanager
     git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
-    git_clon https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git package/luci-app-unblockneteasemusic
+    git_clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git package/luci-app-unblockneteasemusic
     
     sed -i "s/ImmortalWrt/OpenWrt/g" package/A/luci-app-homeproxy/po/zh_Hans/homeproxy.po
     sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/A/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
+    sed -i 's/"admin/"admin\/services/g' package/A/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
     sed -i 's/解除网易云音乐播放限制/音乐解锁/g' package/A/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
     
     # ttyd tailscale zerotier
@@ -407,7 +402,7 @@ apply_custom_settings() {
     #curl -fsSL https://raw.githubusercontent.com/0118Add/build-openwrt/master/scripts/30_network.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js
 
     # comment out the following line to restore the full description
-    sed -i '/# timezone/i grep -q '\''/tmp/sysinfo/model'\'' /etc/rc.local || sudo sed -i '\''/exit 0/i [ "$(cat /sys\\/class\\/dmi\\/id\\/sys_vendor 2>\\/dev\\/null)" = "Default string" ] \&\& echo "x86_64" > \\/tmp\\/sysinfo\\/model'\'' /etc/rc.local\n' package/default-settings/default/zzz-default-settings
+    sed -i '/# timezone/i grep -q '\''/tmp/sysinfo/model'\'' /etc/rc.local || sudo sed -i '\''/exit 0/i [ "$(cat /sys\\/class\\/dmi\\/id\\/sys_vendor 2>\\/dev\\/null)" = "Default string" ] \&\& echo "x86_64" > \\/tmp\\/sysinfo\\/model'\'' /etc/rc.local\n' package/A/default-settings/default/zzz-default-settings
     sed -i '/# timezone/i sed -i "s/\\(DISTRIB_DESCRIPTION=\\).*/\\1'\''OpenWrt $(sed -n "s/DISTRIB_DESCRIPTION='\''OpenWrt \\([^ ]*\\) .*/\\1/p" /etc/openwrt_release)'\'',/" /etc/openwrt_release\nsource /etc/openwrt_release \&\& sed -i -e "s/distversion\\s=\\s\\".*\\"/distversion = \\"$DISTRIB_ID $DISTRIB_RELEASE ($DISTRIB_REVISION)\\"/g" -e '\''s/distname    = .*$/distname    = ""/g'\'' /usr/lib/lua/luci/version.lua\nsed -i "s/luciname    = \\".*\\"/luciname    = \\"LuCI openwrt-25.12\\"/g" /usr/lib/lua/luci/version.lua\nsed -i "s/luciversion = \\".*\\"/luciversion = \\"\\"/g" /usr/lib/lua/luci/version.lua\necho "export const revision = '\''\'\'', branch = '\''LuCI openwrt-25.12'\'';" > /usr/share/ucode/luci/version.uc\n/etc/init.d/rpcd restart\n' package/default-settings/default/zzz-default-settings
     #sed -i '/# timezone/i sed -i "s/\\(DISTRIB_DESCRIPTION=\\).*/\\1'\''OpenWrt $(sed -n "s/DISTRIB_DESCRIPTION='\''OpenWrt \\([^ ]*\\) .*/\\1/p" /etc/openwrt_release)'\'',/" /etc/openwrt_release\nsource /etc/openwrt_release \&\& sed -i -e "s/distversion\\s=\\s\\".*\\"/distversion = \\"$DISTRIB_ID $DISTRIB_RELEASE ($DISTRIB_REVISION)\\"/g" -e '\''s/distname    = .*$/distname    = ""/g'\'' /usr/lib/lua/luci/version.lua\nsed -i "s/luciname    = \\".*\\"/luciname    = \\"LuCI openwrt-24.10\\"/g" /usr/lib/lua/luci/version.lua\nsed -i "s/luciversion = \\".*\\"/luciversion = \\"v'$(date +%Y%m%d)'\\"/g" /usr/lib/lua/luci/version.lua\necho "export const revision = '\''v'$(date +%Y%m%d)'\'\'', branch = '\''LuCI openwrt-24.10'\'';" > /usr/share/ucode/luci/version.uc\n/etc/init.d/rpcd restart\n' package/default-settings/default/zzz-default-settings
     curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/patch/release-os > package/base-files/files/etc/os-release
