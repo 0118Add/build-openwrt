@@ -314,47 +314,42 @@ add_custom_packages() {
     #clone_all https://github.com/brvphoenix/wrtbwmon
 
     # 科学上网插件
+    rm -rf feeds/packages/lang/{golang,node}
+    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
     rm -rf feeds/packages/net/{xray-core,sing-box}
-    git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages -b main
+    rm -rf feeds/luci/applications/{luci-app-filemanager,luci-app-dockerman,luci-app-advanced-reboot,luci-app-mjpg-streamer}
+    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
     #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
+    git_clone https://github.com/8688Add/autocore package/autocore
+    #git_clone https://github.com/sbwml/autocore-arm -b openwrt-25.12 package/autocore    
+    git_clone https://github.com/sbwml/default-settings package/default-settings
+    git_clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
+    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt -b packages-24.10 feeds/packages/lang/node
+    git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
+    git_clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
+    git_clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+    git_clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+    git_clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
     git_clone https://github.com/immortalwrt/homeproxy package/luci-app-homeproxy
+    git_clone https://github.com/sbwml/luci-app-filemanager package/luci-app-filemanager
     git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
-
-    sed -i "s/ImmortalWrt/OpenWrt/g" package/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    git_clon https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git package/luci-app-unblockneteasemusic
     
-    # partexp
-    git clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
+    sed -i "s/ImmortalWrt/OpenWrt/g" package/A/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/A/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
+    sed -i 's/解除网易云音乐播放限制/音乐解锁/g' package/A/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
     
-    # luci-app-filemanager
-    rm -rf feeds/luci/applications/luci-app-filemanager
-    git clone https://github.com/sbwml/luci-app-filemanager package/luci-app-filemanager
-    
-    # golang 26.x
-    rm -rf feeds/packages/lang/golang
-    git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
-    
-    # 预编译 node
-    rm -rf feeds/packages/lang/node
-    git clone --depth=1 -b packages-24.10 https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
-    
-    # ttyd
+    # ttyd tailscale zerotier
     #rm -rf feeds/luci/applications/luci-app-ttyd
-    sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
-    
-    # tailscale zerotier
     #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
+    sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
     #sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
     
-    # unblockneteasemusic
-    git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git package/luci-app-unblockneteasemusic
-    sed -i 's/解除网易云音乐播放限制/音乐解锁/g' package/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
-
     # turboacc
-    #git clone https://github.com/chenmozhijin/turboacc package/turboacc
     curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
     sed -i 's/Turbo ACC 网络加速/网络加速/g' package/turboacc/luci-app-turboacc/po/zh-cn/turboacc.po
     
@@ -405,23 +400,6 @@ apply_custom_settings() {
     # 修正连接数
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
-    # 调整Dockerman到服务菜单
-    rm -rf feeds/luci/applications/luci-app-dockerman
-    git clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
-    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-    git clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
-    
-    # autoCore
-    git clone https://github.com/8688Add/autocore package/autocore
-    #git clone https://github.com/sbwml/autocore-arm -b openwrt-25.12 package/autocore
-    
-    # Default settings
-    git clone https://github.com/sbwml/default-settings package/default-settings
-    
     # 自定义默认配置
     #curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/patch/25.12/10_system.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
     curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
@@ -435,8 +413,6 @@ apply_custom_settings() {
     curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/patch/release-os > package/base-files/files/etc/os-release
     
     rm -rf feeds/packages/net/onionshare-cli
-    rm -rf feeds/luci/applications/luci-app-mjpg-streamer
-    rm -rf feeds/luci/applications/luci-app-advanced-reboot
     sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile
     
     # 移除attendedsysupgrade
