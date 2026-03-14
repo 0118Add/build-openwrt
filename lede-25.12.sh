@@ -320,7 +320,7 @@ add_custom_packages() {
     #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_dir https://github.com/Openwrt-Passwall/openwrt-passwall-packages sing-box
+    clone_dir https://github.com/Openwrt-Passwall/openwrt-passwall-packages sing-box xray-core
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
     clone_dir https://github.com/sbwml/openwrt_pkgs rtp2httpd luci-app-rtp2httpd
     git_clone https://github.com/8688Add/autocore package/autocore
