@@ -246,7 +246,7 @@ set_variable_values() {
 
     # 内核版本
     KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
-    KERNEL_FILE="include/kernel-$KERNEL"
+    KERNEL_FILE="target/linux/generic/kernel-$KERNEL"
     [ -e "$KERNEL_FILE" ] || KERNEL_FILE="target/linux/generic/kernel-$KERNEL"
     KERNEL_VERSION=$(grep -oP 'LINUX_KERNEL_HASH-\K[\d\.]+' "$KERNEL_FILE")
     echo "KERNEL_VERSION=$KERNEL_VERSION" >>$GITHUB_ENV
