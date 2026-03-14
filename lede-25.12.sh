@@ -322,6 +322,7 @@ add_custom_packages() {
     #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
+    clone_dir https://github.com/sbwml/openwrt_pkgs rtp2httpd luci-app-rtp2httpd
     git_clone https://github.com/8688Add/autocore package/autocore
     #git_clone https://github.com/sbwml/autocore-arm -b openwrt-25.12 package/autocore    
     git_clone https://github.com/sbwml/default-settings package/default-settings
