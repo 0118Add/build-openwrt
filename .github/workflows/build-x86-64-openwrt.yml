@@ -49,12 +49,12 @@ on:
       partsize:
         description: '设置rootfs大小'
         required: false
-        default: '800'
+        default: '960'
 
       toolchain:
         description: '使用toolchain缓存'
         required: false
-        default: true
+        default: false
         type: boolean
 
       artifact:
