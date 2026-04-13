@@ -299,7 +299,7 @@ add_custom_packages() {
     echo "📦 添加额外插件..."
 
     # 创建插件保存目录
-    destination_dir="package/A"
+    destination_dir="package"
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
     # 插件
