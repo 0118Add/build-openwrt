@@ -299,7 +299,7 @@ add_custom_packages() {
     echo "📦 添加额外插件..."
 
     # 创建插件保存目录
-    destination_dir="package/A"
+    destination_dir="package"
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
     # 插件
@@ -316,7 +316,7 @@ add_custom_packages() {
 
     # 科学上网插件
     git_clone https://github.com/sbwml/luci-app-dockerman
-    git_clone https://github.com/vernesong/OpenClash luci-app-openclash
+    git_clone https://github.com/vernesong/OpenClash
     #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
     #git_clone https://github.com/QiuSimons/luci-app-daed
     
