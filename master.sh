@@ -245,7 +245,8 @@ set_variable_values() {
     echo "DEVICE_TARGET=$DEVICE_TARGET" >>$GITHUB_ENV
 
     # 内核版本
-    KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
+    #KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
+    KERNEL=$(grep -oP 'KERNEL_TESTING_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
     KERNEL_FILE="include/kernel-$KERNEL"
     [ -e "$KERNEL_FILE" ] || KERNEL_FILE="target/linux/generic/kernel-$KERNEL"
     KERNEL_VERSION=$(grep -oP 'LINUX_KERNEL_HASH-\K[\d\.]+' "$KERNEL_FILE")
