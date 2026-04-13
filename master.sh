@@ -365,7 +365,7 @@ apply_custom_settings() {
     sed -i "s/hostname='.*'/hostname='OpenWrt'/g" package/base-files/files/bin/config_generate
     
     # 修改x86内核版本
-    #sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.18/g' ./target/linux/x86/Makefile
+    sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.18/g' ./target/linux/x86/Makefile
     
     # 更改默认shell为zsh
     # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
@@ -381,14 +381,6 @@ apply_custom_settings() {
     # 修正连接数
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
-    # golang 26.x
-    #rm -rf feeds/packages/lang/golang
-    #git_clone https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
-    
-    # 预编译 node
-    #rm -rf feeds/packages/lang/node/node
-    #git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node/node
-    
     # 调整Dockerman到服务菜单
     rm -rf feeds/luci/applications/luci-app-dockerman
     git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
