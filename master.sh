@@ -315,13 +315,11 @@ add_custom_packages() {
     #clone_all https://github.com/brvphoenix/wrtbwmon
 
     # 科学上网插件
+    git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
-    #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
-    #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
     git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
-    git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
-
+    #git_clone https://github.com/QiuSimons/luci-app-daed
+    
     sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
     sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
     
@@ -382,8 +380,11 @@ apply_custom_settings() {
     # 修正连接数
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
+    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
+    #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
+    git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
+    
     # 调整Dockerman到服务菜单
-    git_clone https://github.com/sbwml/luci-app-dockerman
     #git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
     #git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
     #cp -rf coolsnowwolf-luci/collections/luci-lib-docker feeds/luci/collections/luci-lib-docker
