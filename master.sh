@@ -385,15 +385,16 @@ apply_custom_settings() {
 
     # 调整Dockerman到服务菜单
     rm -rf feeds/luci/applications/luci-app-dockerman
-    git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
+    clone_all https://github.com/sbwml/luci-app-dockerman
+    #git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
     #git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
     #cp -rf coolsnowwolf-luci/collections/luci-lib-docker feeds/luci/collections/luci-lib-docker
     #ln -sf ../../../feeds/luci/collections/luci-lib-docker ./package/feeds/luci/luci-lib-docker
-    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-    git_clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git_clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git_clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git_clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
+    #rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
+    #git_clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
+    #git_clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+    #git_clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+    #git_clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
     #sed -i 's/"admin",/"admin","services",/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
     #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/*.lua
     #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
