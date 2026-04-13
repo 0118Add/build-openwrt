@@ -315,8 +315,7 @@ add_custom_packages() {
     #clone_all https://github.com/brvphoenix/wrtbwmon
 
     # 科学上网插件
-    rm -rf feeds/luci/applications/luci-app-openclash
-    clone_dir dev https://github.com/vernesong/OpenClash luci-app-openclash
+    git_clone https://github.com/vernesong/OpenClash luci-app-openclash
     clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
@@ -384,8 +383,7 @@ apply_custom_settings() {
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
     # 调整Dockerman到服务菜单
-    rm -rf feeds/luci/applications/luci-app-dockerman
-    clone_all https://github.com/sbwml/luci-app-dockerman
+    git_clone https://github.com/sbwml/luci-app-dockerman
     #git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
     #git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
     #cp -rf coolsnowwolf-luci/collections/luci-lib-docker feeds/luci/collections/luci-lib-docker
