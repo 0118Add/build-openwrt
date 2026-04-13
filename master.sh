@@ -315,6 +315,7 @@ add_custom_packages() {
     #clone_all https://github.com/brvphoenix/wrtbwmon
 
     # 科学上网插件
+    rm -rf feeds/luci/applications/luci-app-openclash
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
     clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
