@@ -429,13 +429,13 @@ apply_custom_settings() {
             sed -i "/luci-app-attendedsysupgrade/d" "$makefile"
         fi
     done
-}
+#}
 
 # 更新配置文件
 #update_config_file() {
     #[ -e "$GITHUB_WORKSPACE/$CONFIG_FILE" ] && cp -f "$GITHUB_WORKSPACE/$CONFIG_FILE" .config
     #make defconfig 1>/dev/null 2>&1
-}
+#}
 
 # 检测指令集架构
 detect_openwrt_arch() {
