@@ -316,7 +316,7 @@ add_custom_packages() {
 
     # 科学上网插件
     rm -rf feeds/luci/applications/luci-app-openclash
-    clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
+    clone_dir dev https://github.com/vernesong/OpenClash luci-app-openclash
     clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
