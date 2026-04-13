@@ -383,11 +383,11 @@ apply_custom_settings() {
 
     # golang 26.x
     rm -rf feeds/packages/lang/golang
-    clone_dir 26.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+    git_clone https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
     
     # 预编译 node
     rm -rf feeds/packages/lang/node/node
-    clone_dir packages-24.10 https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node/node
+    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node/node
     
     # 调整Dockerman到服务菜单
     rm -rf feeds/luci/applications/luci-app-dockerman
