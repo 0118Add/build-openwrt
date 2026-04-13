@@ -317,11 +317,11 @@ add_custom_packages() {
     # 科学上网插件
     git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/vernesong/OpenClash luci-app-openclash
-    git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+    #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
     #git_clone https://github.com/QiuSimons/luci-app-daed
     
-    #sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-    #sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
     
     # tailscale zerotier
     #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
