@@ -200,7 +200,7 @@ main() {
     status_info "加载个人设置" apply_custom_settings
 
     # 更新配置文件
-    #status_info "更新配置文件" update_config_file
+    status_info "更新配置文件" update_config_file
 
     # 下载openclash运行内核
     #status_info "下载openclash运行内核" preset_openclash_core
@@ -429,13 +429,13 @@ apply_custom_settings() {
             sed -i "/luci-app-attendedsysupgrade/d" "$makefile"
         fi
     done
-#}
+}
 
 # 更新配置文件
-#update_config_file() {
-    #[ -e "$GITHUB_WORKSPACE/$CONFIG_FILE" ] && cp -f "$GITHUB_WORKSPACE/$CONFIG_FILE" .config
-    #make defconfig 1>/dev/null 2>&1
-#}
+update_config_file() {
+    [ -e "$GITHUB_WORKSPACE/$CONFIG_FILE" ] && cp -f "$GITHUB_WORKSPACE/$CONFIG_FILE" .config
+    make defconfig 1>/dev/null 2>&1
+}
 
 # 检测指令集架构
 detect_openwrt_arch() {
