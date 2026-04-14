@@ -308,6 +308,7 @@ add_custom_packages() {
     # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
     #clone_all https://github.com/sbwml/luci-app-alist
     #clone_all https://github.com/sbwml/luci-app-mosdns
+    git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/sbwml/packages_lang_golang golang
     git_clone https://github.com/sbwml/default-settings default-settings
     git_clone https://github.com/8688Add/autocore-arm autocore
@@ -315,10 +316,12 @@ add_custom_packages() {
     #clone_all https://github.com/linkease/istore luci
     #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
     #clone_all https://github.com/brvphoenix/wrtbwmon
-
+    git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
+    
     # 科学上网插件
-    git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/vernesong/OpenClash luci-app-openclash
+    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
+    #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
     #git_clone https://github.com/QiuSimons/luci-app-daed
     
@@ -374,10 +377,6 @@ apply_custom_settings() {
     # 修正连接数
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
-    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
-    #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
-    git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
-    
     # 调整Dockerman到服务菜单
     #git_clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
     #git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
