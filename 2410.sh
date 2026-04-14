@@ -298,7 +298,7 @@ add_custom_packages() {
     echo "📦 添加额外插件..."
 
     # 创建插件保存目录
-    destination_dir="package/A"
+    destination_dir="package"
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
     # 插件
@@ -307,24 +307,31 @@ add_custom_packages() {
     # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
     #clone_all https://github.com/sbwml/luci-app-alist
     #clone_all https://github.com/sbwml/luci-app-mosdns
-    #git_clone https://github.com/sbwml/packages_lang_golang golang
+    git_clone https://github.com/sbwml/luci-app-dockerman
+    git_clone https://github.com/sbwml/packages_lang_golang golang
+    git_clone https://github.com/sbwml/default-settings default-settings
+    #git_clone https://github.com/8688Add/autocore-arm autocore
+    clone_dir openwrt-24.10 https://github.com/8688Add/autocore-arm autocore
     #clone_all https://github.com/linkease/istore-ui
     #clone_all https://github.com/linkease/istore luci
     #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
     #clone_all https://github.com/brvphoenix/wrtbwmon
+    git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
 
     # 科学上网插件
-    clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
+    git_clone https://github.com/vernesong/OpenClash luci-app-openclash
+    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
-    #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
-    git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
-    git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
+    #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+    #git_clone https://github.com/QiuSimons/luci-app-daed
 
     # tailscale zerotier
     #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
-    sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
+    #sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
 
+    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    
     # unblockneteasemusic
     sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applications/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
@@ -332,15 +339,6 @@ add_custom_packages() {
     find "$destination_dir" -type f -name "Makefile" | xargs sed -i \
         -e 's?\.\./\.\./\(lang\|devel\)?$(TOPDIR)/feeds/packages/\1?' \
         -e 's?\.\./\.\./luci.mk?$(TOPDIR)/feeds/luci/luci.mk?'
-
-    # 转换插件语言翻译
-    for e in $(ls -d $destination_dir/luci-*/po feeds/luci/applications/luci-*/po); do
-        if [[ -d $e/zh-cn && ! -d $e/zh_Hans ]]; then
-            ln -s zh-cn $e/zh_Hans 2>/dev/null
-        elif [[ -d $e/zh_Hans && ! -d $e/zh-cn ]]; then
-            ln -s zh_Hans $e/zh-cn 2>/dev/null
-        fi
-    done
 }
 
 # 加载个人设置
@@ -390,10 +388,10 @@ apply_custom_settings() {
     sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
 
     # 自定义默认配置
-    sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
+    #sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
     #cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
     curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/patch/10_system.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-    curl -fsSL https://raw.githubusercontent.com/0118Add/X86-N1-Actions/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
+    #curl -fsSL https://raw.githubusercontent.com/0118Add/X86-N1-Actions/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
     #curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/immortalwrt/29_ports.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 
     # comment out the following line to restore the full description
