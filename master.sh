@@ -308,7 +308,9 @@ add_custom_packages() {
     # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
     #clone_all https://github.com/sbwml/luci-app-alist
     #clone_all https://github.com/sbwml/luci-app-mosdns
-    #git_clone https://github.com/sbwml/packages_lang_golang golang
+    git_clone https://github.com/sbwml/packages_lang_golang golang
+    git_clone https://github.com/sbwml/default-settings default-settings
+    git_clone https://github.com/8688Add/autocore-arm autocore
     #clone_all https://github.com/linkease/istore-ui
     #clone_all https://github.com/linkease/istore luci
     #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
@@ -322,6 +324,7 @@ add_custom_packages() {
     
     sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
     sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
     
     # tailscale zerotier
     #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
