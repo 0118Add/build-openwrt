@@ -302,6 +302,7 @@ add_custom_packages() {
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
     # 插件
+    rm -rf feeds/luci/applications/luci-app-mjpg-streamer
     # clone_dir openwrt-23.05 https://github.com/coolsnowwolf/luci luci-app-adguardhome
     # clone_all https://github.com/lwb1978/openwrt-gecoosac
     # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
