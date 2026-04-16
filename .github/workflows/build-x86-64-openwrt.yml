@@ -89,10 +89,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Show system
+      - name: Check Server Performance
         run: |
-          echo -e "Total CPU cores\t: $(nproc)"
-          cat /proc/cpuinfo | grep 'model name'
+          echo "警告⚠"
+          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
+          echo -e "已知CPU型号(降序): 7763，8370C，8272CL，8171M，E5-2673\n"
+          echo "==========================CPU信息=========================="
+          echo "CPU物理数量: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo "CPU线程数量: $(nproc)"
+          echo -e "CPU型号信息:$(cat /proc/cpuinfo | grep -m1 name | awk -F: '{print $2}')\n"
+          echo "==========================内存信息=========================="
+          echo "已安装内存详细信息:"
+          echo -e "$(sudo lshw -short -C memory | grep GiB)\n"
+          echo "==========================硬盘信息=========================="
+          echo "硬盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
       - name: Initialization Environment
         env:
@@ -110,6 +120,24 @@ jobs:
           sudo -E systemctl daemon-reload
           sudo timedatectl set-timezone "$TZ"
 
+      - name: Combine Disks
+        run: |
+          if mountpoint -q /mnt; then
+            mnt_size=$(($(df -k --output=avail /mnt | tail -1) / 1024 - 1024))
+            sudo truncate -s ${mnt_size}M /mnt/mnt.img
+            loop_mnt=$(sudo losetup -f --show /mnt/mnt.img)
+          fi
+          root_size=$(($(df -k --output=avail / | tail -1) / 1024 - 4096))
+          sudo truncate -s ${root_size}M /root.img
+          loop_root=$(sudo losetup -f --show /root.img)
+          sudo pvcreate -f $loop_mnt $loop_root
+          sudo vgcreate github $loop_mnt $loop_root
+          sudo lvcreate -n runner -l 100%FREE github
+          sudo mkfs.btrfs -f /dev/github/runner
+          sudo mkdir -p /workdir
+          sudo mount -o compress=zstd /dev/github/runner /workdir
+          sudo chown -R runner:runner /workdir && df -hT    
+      
       - name: Load Custom Script
         run: chmod +x $DIY_SCRIPT && ./$DIY_SCRIPT
 
@@ -155,8 +183,8 @@ jobs:
           cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
           echo -e "$(nproc) thread compile"
           make -j$(nproc) || make -j1 V=s
-          echo "FILE_DATE=$(date +"%Y.%m.%d")" >>$GITHUB_ENV
-          echo "DATE=$(date +"%Y.%m.%d-%H:%M:%S")" >>$GITHUB_ENV
+          echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+          echo "DATE=$(date +"%Y.%m.%d-%H:%M:%S")" >> $GITHUB_ENV
 
       - name: Organize Files
         if: steps.compile.conclusion == 'success'
@@ -166,12 +194,12 @@ jobs:
           echo "==============================="
           cd $OPENWRT_PATH/bin/targets/*/* && ls
           echo "==============================="
-          sed '/^$/d' $OPENWRT_PATH/.config >config.txt
+          sed '/^$/d' $OPENWRT_PATH/.config > config.txt
           cat config.buildinfo
           cp -rf $OPENWRT_PATH/bin/packages/* packages
           tar -zcf packages.tar.gz packages
           sleep 3s && rm -rf packages sha256sums *.buildinfo *.bin *.json *rootfs.img.gz *targz-combined-efi.img.gz *combined.img.gz *.manifest
-          echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
+          echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
 
       - name: Upload Firmware To Artifact
         if: steps.compile.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true'
