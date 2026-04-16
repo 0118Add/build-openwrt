@@ -203,7 +203,7 @@ main() {
     status_info "更新配置文件" update_config_file
 
     # 下载openclash运行内核
-    status_info "下载openclash运行内核" preset_openclash_core
+    #status_info "下载openclash运行内核" preset_openclash_core
 
     # 下载zsh终端工具
     status_info "下载zsh终端工具" preset_shell_tools
