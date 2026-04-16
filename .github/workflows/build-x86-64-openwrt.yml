@@ -91,7 +91,6 @@ jobs:
 
       - name: Check Server Performance
         run: |
-          echo "==========================CPU信息=========================="
           echo "CPU物理数量: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
           echo "CPU线程数量: $(nproc)"
           echo -e "CPU型号信息:$(cat /proc/cpuinfo | grep -m1 name | awk -F: '{print $2}')\n"
