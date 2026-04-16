@@ -310,7 +310,8 @@ add_custom_packages() {
     #git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/sbwml/packages_lang_golang golang
     git_clone https://github.com/sbwml/default-settings default-settings
-    clone_dir openwrt-24.10 https://github.com/1980Add/autocore-arm autocore
+    git_clone openwrt-24.10 https://github.com/1980Add/autocore-arm autocore
+    clone_dir https://github.com/Openwrt-Passwall/openwrt-passwall-packages shadowsocks-libev shadowsocksr-libev sing-box
     #clone_all https://github.com/linkease/istore-ui
     #clone_all https://github.com/linkease/istore luci
     #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
