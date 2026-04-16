@@ -307,31 +307,37 @@ add_custom_packages() {
     # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
     #clone_all https://github.com/sbwml/luci-app-alist
     #clone_all https://github.com/sbwml/luci-app-mosdns
-    git_clone https://github.com/sbwml/luci-app-dockerman
+    #git_clone https://github.com/sbwml/luci-app-dockerman
     git_clone https://github.com/sbwml/packages_lang_golang golang
     git_clone https://github.com/sbwml/default-settings default-settings
-    #git_clone https://github.com/8688Add/autocore-arm autocore
     clone_dir openwrt-24.10 https://github.com/8688Add/autocore-arm autocore
     #clone_all https://github.com/linkease/istore-ui
     #clone_all https://github.com/linkease/istore luci
     #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
     #clone_all https://github.com/brvphoenix/wrtbwmon
     git_clone https://github.com/sirpdboy/luci-app-partexp luci-app-partexp
-
+    
     # 科学上网插件
     git_clone https://github.com/vernesong/OpenClash luci-app-openclash
-    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
+    clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
     #clone_all https://github.com/nikkinikki-org/OpenWrt-momo
     #git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
     #git_clone https://github.com/QiuSimons/luci-app-daed
+    clone_dir main https://github.com/kiddin9/op-packages luci-app-passwall
+    
+    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 
+    sed -i 's/"admin",/"admin","services",/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/*.lua
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
+    
     # tailscale zerotier
     #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
     #sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
 
-    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-    
     # unblockneteasemusic
     sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applications/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
@@ -371,21 +377,21 @@ apply_custom_settings() {
     sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
 
     # 调整Dockerman到服务菜单
-    rm -rf feeds/luci/applications/luci-app-dockerman
-    git clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
-    git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
-    cp -rf coolsnowwolf-luci/collections/luci-lib-docker feeds/luci/collections/luci-lib-docker
-    ln -sf ../../../feeds/luci/collections/luci-lib-docker ./package/feeds/luci/luci-lib-docker
-    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-    git clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
-    sed -i 's/"admin",/"admin","services",/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/*.lua
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
-    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
+    #rm -rf feeds/luci/applications/luci-app-dockerman
+    #git clone https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
+    #git clone --depth=1 -b openwrt-25.12 https://github.com/coolsnowwolf/luci.git coolsnowwolf-luci
+    #cp -rf coolsnowwolf-luci/collections/luci-lib-docker feeds/luci/collections/luci-lib-docker
+    #ln -sf ../../../feeds/luci/collections/luci-lib-docker ./package/feeds/luci/luci-lib-docker
+    #rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
+    #git clone https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
+    #git clone https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+    #git clone https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+    #git clone https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
+    #sed -i 's/"admin",/"admin","services",/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
+    #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/*.lua
+    #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
+    #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
+    #sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
 
     # 自定义默认配置
     #sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
