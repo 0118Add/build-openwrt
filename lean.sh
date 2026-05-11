@@ -203,7 +203,7 @@ main() {
     status_info "更新配置文件" update_config_file
 
     # 下载openclash运行内核
-    status_info "下载openclash运行内核" preset_openclash_core
+    #status_info "下载openclash运行内核" preset_openclash_core
 
     # 下载zsh终端工具
     status_info "下载zsh终端工具" preset_shell_tools
@@ -305,37 +305,45 @@ add_custom_packages() {
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
     # 基础插件
-    git_clone https://github.com/kongfl888/luci-app-adguardhome
-    clone_all lua https://github.com/sirpdboy/luci-app-ddns-go
-    clone_dir lua https://github.com/sbwml/luci-app-alist luci-app-alist
-    clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
+    #git_clone https://github.com/kongfl888/luci-app-adguardhome
+    #clone_all lua https://github.com/sirpdboy/luci-app-ddns-go
+    git_clone https://github.com/sbwml/luci-app-dockerman
+    #clone_dir lua https://github.com/sbwml/luci-app-alist luci-app-alist
+    #clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     git_clone https://github.com/sbwml/packages_lang_golang golang
-    git_clone lede https://github.com/pymumu/luci-app-smartdns
-    git_clone https://github.com/pymumu/openwrt-smartdns smartdns
-    git_clone https://github.com/ximiTech/luci-app-msd_lite
-    git_clone https://github.com/ximiTech/msd_lite
-    clone_all https://github.com/linkease/istore-ui
-    clone_all https://github.com/linkease/istore luci
-
+    clone_dir openwrt-24.10 https://github.com/sbwml/feeds_packages_lang_node-prebuilt node
+    #git_clone lede https://github.com/pymumu/luci-app-smartdns
+    #git_clone https://github.com/pymumu/openwrt-smartdns smartdns
+    #git_clone https://github.com/ximiTech/luci-app-msd_lite
+    #git_clone https://github.com/ximiTech/msd_lite
+    clone_dir openwrt-25.12 https://github.com/immortalwrt/luci luci-app-msd_lite
+    clone_dir openwrt-25.12 https://github.com/immortalwrt/packages msd_lite
+    
+    sed -i 's/"admin/"admin\/services/g' feeds/luci/applications/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
+    sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
+    sed -i 's/TurboACC/网络加速/g' feeds/luci/applications/luci-app-turboacc/root/usr/share/luci/menu.d/luci-app-turboacc.json
+    sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applications/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
+    
     # 科学上网插件
     clone_all https://github.com/fw876/helloworld
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
-    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
-    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
+    #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
+    #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-
+    clone_dir dev https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+    
     # Themes
-    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
-    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
-    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
-    clone_dir https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom luci-theme-infinityfreedom-ng
-    clone_dir https://github.com/haiibo/packages luci-theme-opentomcat
+    #git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
+    #git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
+    #git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
+    #clone_dir https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom luci-theme-infinityfreedom-ng
+    #clone_dir https://github.com/haiibo/packages luci-theme-opentomcat
 
     # 晶晨宝盒
-    clone_all https://github.com/ophub/luci-app-amlogic
-    sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/$GITHUB_REPOSITORY'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+    #clone_all https://github.com/ophub/luci-app-amlogic
+    #sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/$GITHUB_REPOSITORY'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
     # sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
-    sed -i "s|ARMv8|$RELEASE_TAG|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+    #sed -i "s|ARMv8|$RELEASE_TAG|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
 
     # 修复Makefile路径
     find "$destination_dir" -type f -name "Makefile" | xargs sed -i \
@@ -367,25 +375,36 @@ apply_custom_settings() {
     # 修改默认ip地址
     [ "$IP_ADDRESS" ] && sed -i '/lan) ipad/s/".*"/"'"$IP_ADDRESS"'"/' package/base-files/*/bin/config_generate
 
+    # 更改主机名
+    sed -i "s/hostname='.*'/hostname='OpenWrt'/g" package/base-files/files/bin/config_generate
+    
+    # 修改x86内核版本
+    sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.18/g' ./target/linux/x86/Makefile    
+    
     # 更改默认shell为zsh
     # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
     # ttyd免登录
     sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
+    # 修改连接数
+    sed -i 's/net.netfilter.nf_conntrack_max=.*/net.netfilter.nf_conntrack_max=65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
+    # 修正连接数
+    sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf    
+    
     # 设置root用户密码为空
     # sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings 
     
     # 更改argon主题背景
-    cp -f $GITHUB_WORKSPACE/images/bg1.jpg feeds/luci/themes/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
+    #cp -f $GITHUB_WORKSPACE/images/bg1.jpg feeds/luci/themes/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
 
     # x86型号只显示cpu型号
-    sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
-    sed -i "s/'C'/'Core '/g; s/'T '/'Thread '/g" package/lean/autocore/files/x86/autocore
+    #sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
+    #sed -i "s/'C'/'Core '/g; s/'T '/'Thread '/g" package/lean/autocore/files/x86/autocore
 
     # 修改版本为编译日期
-    orig_version=$(awk -F "'" '/DISTRIB_REVISION=/{print $2}' package/lean/default-settings/files/zzz-default-settings)
-    sed -i "s/$orig_version/R$(date +%y.%-m.%-d)/g" package/lean/default-settings/files/zzz-default-settings
+    #orig_version=$(awk -F "'" '/DISTRIB_REVISION=/{print $2}' package/lean/default-settings/files/zzz-default-settings)
+    #sed -i "s/$orig_version/R$(date +%y.%-m.%-d)/g" package/lean/default-settings/files/zzz-default-settings
 
     # 删除主题默认设置
     # find $destination_dir/luci-theme-*/ -type f -name '*luci-theme-*' -exec sed -i '/set luci.main.mediaurlbase/d' {} +
@@ -398,6 +417,9 @@ apply_custom_settings() {
 
     # 取消对samba4的菜单调整
     # sed -i '/samba4/s/^/#/' package/lean/default-settings/files/zzz-default-settings
+    
+    # 修改系统文件
+    curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
 }
 
 # 更新配置文件
