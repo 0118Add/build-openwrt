@@ -454,7 +454,7 @@ detect_openwrt_arch() {
     #else
         #return 99
     #fi
-}
+#}
 
 # 下载zsh终端工具
 preset_shell_tools() {
