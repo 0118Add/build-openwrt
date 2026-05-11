@@ -230,7 +230,7 @@ clone_source_code() {
     [ -d openwrt ] && cd openwrt || exit
     echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 
-    # 设置luci版本为18.06
+    # 设置luci版本
     #sed -i '/luci/s/^#//; /luci.git;openwrt/s/^/#/' feeds.conf.default
 }
 
