@@ -384,6 +384,7 @@ apply_custom_settings() {
     if [[ $KERNEL_TESTING_PATCHVER > $KERNEL_PATCHVER ]]; then
       sed -i "s/$KERNEL_PATCHVER/$KERNEL_TESTING_PATCHVER/g" target/linux/x86/Makefile
     fi
+    
     # 更改默认shell为zsh
     # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
