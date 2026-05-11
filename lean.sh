@@ -311,7 +311,7 @@ add_custom_packages() {
     #clone_dir lua https://github.com/sbwml/luci-app-alist luci-app-alist
     #clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     git_clone https://github.com/sbwml/packages_lang_golang golang
-    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt
+    #git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt
     #git_clone lede https://github.com/pymumu/luci-app-smartdns
     #git_clone https://github.com/pymumu/openwrt-smartdns smartdns
     #git_clone https://github.com/ximiTech/luci-app-msd_lite
