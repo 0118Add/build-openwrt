@@ -32,7 +32,7 @@ on:
         required: true
         default: 'master'
         type: choice
-        options: ['master', '23.05', '2410', '25.12', 'lede-25.12', 'lede-master']
+        options: ['master', '23.05', '2410', '25.12', 'lean', 'lede-master']
 
       target:
         description: '选择要编译的机型'
