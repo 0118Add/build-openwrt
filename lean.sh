@@ -231,7 +231,7 @@ clone_source_code() {
     echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 
     # 设置luci版本
-    #sed -i '/luci/s/^#//; /luci.git;openwrt/s/^/#/' feeds.conf.default
+    sed -i '/luci/s/^#//; /luci.git;openwrt-25.12/s/^/#/' feeds.conf.default
 }
 
 # 设置环境变量
