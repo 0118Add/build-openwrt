@@ -203,7 +203,7 @@ main() {
     status_info "更新配置文件" update_config_file
 
     # 下载openclash运行内核
-    #status_info "下载openclash运行内核" preset_openclash_core
+    status_info "下载openclash运行内核" preset_openclash_core
 
     # 下载zsh终端工具
     status_info "下载zsh终端工具" preset_shell_tools
@@ -218,49 +218,52 @@ main() {
 # 拉取编译源码
 clone_source_code() {
     # 设置编译源码与分支
-    REPO_URL="https://github.com/openwrt/openwrt"
-    echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
-    REPO_BRANCH="openwrt-25.12"
-    echo "REPO_BRANCH=$REPO_BRANCH" >>$GITHUB_ENV
+    REPO_URL="https://github.com/coolsnowwolf/lede"
+    echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
+    REPO_BRANCH="master"
+    echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
 
     # 拉取编译源码
+    cd /workdir
     git clone -q -b "$REPO_BRANCH" --single-branch "$REPO_URL" openwrt
+    ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
     [ -d openwrt ] && cd openwrt || exit
-    echo "OPENWRT_PATH=$PWD" >>$GITHUB_ENV
+    echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+
+    # 设置luci版本为18.06
+    sed -i '/luci/s/^#//; /luci.git;openwrt/s/^/#/' feeds.conf.default
 }
 
 # 设置环境变量
 set_variable_values() {
-    local TARGET_NAME SUBTARGET_NAME KERNEL KERNEL_FILE TOOLS_HASH
+    local TARGET_NAME SUBTARGET_NAME KERNEL TOOLS_HASH
 
     # 源仓库与分支
     SOURCE_REPO=$(basename "$REPO_URL")
-    echo "SOURCE_REPO=$SOURCE_REPO" >>$GITHUB_ENV
-    echo "LITE_BRANCH=${REPO_BRANCH#*-}" >>$GITHUB_ENV
+    echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
+    echo "LITE_BRANCH=${REPO_BRANCH#*-}" >> $GITHUB_ENV
 
     # 平台架构
     TARGET_NAME=$(grep -oP "^CONFIG_TARGET_\K[a-z0-9]+(?==y)" "$GITHUB_WORKSPACE/$CONFIG_FILE")
     SUBTARGET_NAME=$(grep -oP "^CONFIG_TARGET_${TARGET_NAME}_\K[a-z0-9]+(?==y)" "$GITHUB_WORKSPACE/$CONFIG_FILE")
     DEVICE_TARGET="$TARGET_NAME-$SUBTARGET_NAME"
-    echo "DEVICE_TARGET=$DEVICE_TARGET" >>$GITHUB_ENV
+    echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
 
     # 内核版本
     KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
-    KERNEL_FILE="target/linux/generic/kernel-$KERNEL"
-    [ -e "$KERNEL_FILE" ] || KERNEL_FILE="target/linux/generic/kernel-$KERNEL"
-    KERNEL_VERSION=$(grep -oP 'LINUX_KERNEL_HASH-\K[\d\.]+' "$KERNEL_FILE")
-    echo "KERNEL_VERSION=$KERNEL_VERSION" >>$GITHUB_ENV
+    KERNEL_VERSION=$(grep -oP 'LINUX_KERNEL_HASH-\K[\d\.]+' "include/kernel-$KERNEL")
+    echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
 
     # toolchain缓存文件名
     TOOLS_HASH=$(git log -1 --pretty=format:"%h" tools toolchain)
     CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-cache-$TOOLS_HASH"
-    echo "CACHE_NAME=$CACHE_NAME" >>$GITHUB_ENV
+    echo "CACHE_NAME=$CACHE_NAME" >> $GITHUB_ENV
 
     # 源码更新信息
-    echo "COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")" >>$GITHUB_ENV
-    echo "COMMIT_DATE=$(git show -s --date=short --format="时间: %ci")" >>$GITHUB_ENV
-    echo "COMMIT_MESSAGE=$(git show -s --date=short --format="内容: %s")" >>$GITHUB_ENV
-    echo "COMMIT_HASH=$(git show -s --date=short --format="hash: %H")" >>$GITHUB_ENV
+    echo "COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")" >> $GITHUB_ENV
+    echo "COMMIT_DATE=$(git show -s --date=short --format="时间: %ci")" >> $GITHUB_ENV
+    echo "COMMIT_MESSAGE=$(git show -s --date=short --format="内容: %s")" >> $GITHUB_ENV
+    echo "COMMIT_HASH=$(git show -s --date=short --format="hash: %H")" >> $GITHUB_ENV
 }
 
 # 下载部署toolchain缓存
@@ -273,16 +276,16 @@ download_toolchain() {
             wget -qc -t=3 "${cache_xa:-$cache_xc}"
             if [ -e *.tzst ]; then
                 tar -I unzstd -xf *.tzst || tar -xf *.tzst
-                [ "$cache_xa" ] || (cp *.tzst $GITHUB_WORKSPACE/output && echo "OUTPUT_RELEASE=true" >>$GITHUB_ENV)
+                [ "$cache_xa" ] || (cp *.tzst $GITHUB_WORKSPACE/output && echo "OUTPUT_RELEASE=true" >> $GITHUB_ENV)
                 [ -d staging_dir ] && sed -i 's/ $(tool.*\/stamp-compile)//' Makefile
             fi
         else
-            echo "REBUILD_TOOLCHAIN=true" >>$GITHUB_ENV
+            echo "REBUILD_TOOLCHAIN=true" >> $GITHUB_ENV
             echo "⚠️ 未找到最新工具链"
             return 99
         fi
     else
-        echo "REBUILD_TOOLCHAIN=true" >>$GITHUB_ENV
+        echo "REBUILD_TOOLCHAIN=true" >> $GITHUB_ENV
         return 99
     fi
 }
@@ -301,54 +304,39 @@ add_custom_packages() {
     destination_dir="package/A"
     [ -d "$destination_dir" ] || mkdir -p "$destination_dir"
 
-    # 插件
-    # clone_dir openwrt-23.05 https://github.com/coolsnowwolf/luci luci-app-adguardhome
-    # clone_all https://github.com/lwb1978/openwrt-gecoosac
-    # clone_dir https://github.com/sirpdboy/luci-app-ddns-go ddns-go luci-app-ddns-go
-    #clone_all https://github.com/sbwml/luci-app-alist
-    #clone_all https://github.com/sbwml/luci-app-mosdns
-    #git_clone https://github.com/sbwml/packages_lang_golang golang
-    #clone_all https://github.com/linkease/istore-ui
-    #clone_all https://github.com/linkease/istore luci
-    #clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
-    #clone_all https://github.com/brvphoenix/wrtbwmon
+    # 基础插件
+    git_clone https://github.com/kongfl888/luci-app-adguardhome
+    clone_all lua https://github.com/sirpdboy/luci-app-ddns-go
+    clone_dir lua https://github.com/sbwml/luci-app-alist luci-app-alist
+    clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
+    git_clone https://github.com/sbwml/packages_lang_golang golang
+    git_clone lede https://github.com/pymumu/luci-app-smartdns
+    git_clone https://github.com/pymumu/openwrt-smartdns smartdns
+    git_clone https://github.com/ximiTech/luci-app-msd_lite
+    git_clone https://github.com/ximiTech/msd_lite
+    clone_all https://github.com/linkease/istore-ui
+    clone_all https://github.com/linkease/istore luci
 
     # 科学上网插件
-    rm -rf feeds/packages/lang/{golang,node}
-    rm -rf feeds/packages/net/{xray-core,sing-box}
-    rm -rf feeds/luci/applications/{luci-app-filemanager,luci-app-dockerman,luci-app-advanced-reboot,luci-app-mjpg-streamer}
-    #clone_all https://github.com/nikkinikki-org/OpenWrt-nikki
-    clone_all https://github.com/nikkinikki-org/OpenWrt-momo
+    clone_all https://github.com/fw876/helloworld
+    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
+    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
+    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_dir https://github.com/0118Add/passwall-packages sing-box xray-core
-    #clone_dir https://github.com/QiuSimons/luci-app-daed daed luci-app-daed
-    clone_dir https://github.com/sbwml/openwrt_pkgs rtp2httpd luci-app-rtp2httpd
-    git_clone https://github.com/8688Add/autocore package/autocore
-    #git_clone https://github.com/sbwml/autocore-arm -b openwrt-25.12 package/autocore    
-    git_clone https://github.com/sbwml/default-settings package/default-settings
-    git_clone https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
-    git_clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
-    git_clone https://github.com/sbwml/luci-app-dockerman package/luci-app-dockerman
-    git_clone https://github.com/immortalwrt/homeproxy package/luci-app-homeproxy
-    git_clone https://github.com/sbwml/luci-app-filemanager package/luci-app-filemanager
-    git_clone https://github.com/sirpdboy/luci-app-partexp package/luci-app-partexp
-    git_clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git package/luci-app-unblockneteasemusic
-    
-    sed -i "s/ImmortalWrt/OpenWrt/g" package/A/luci-app-homeproxy/po/zh_Hans/homeproxy.po
-    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/A/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-    sed -i 's/"admin/"admin\/services/g' package/A/luci-app-dockerman/root/usr/share/luci/menu.d/luci-app-dockerman.json
-    sed -i 's/解除网易云音乐播放限制/音乐解锁/g' package/A/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
-    
-    # ttyd tailscale zerotier
-    #rm -rf feeds/luci/applications/luci-app-ttyd
-    #git clone https://github.com/Jaykwok2999/luci-app-tailscale  package/luci-app-tailscale
-    sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
-    #sed -i 's/vpn/services/g' feeds/luci/applications/luci-app-zerotier/root/usr/share/luci/menu.d/luci-app-zerotier.json
-    
-    # turboacc
-    curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
-    sed -i 's/Turbo ACC 网络加速/网络加速/g' package/turboacc/luci-app-turboacc/po/zh-cn/turboacc.po
-    
+
+    # Themes
+    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
+    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
+    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
+    clone_dir https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom luci-theme-infinityfreedom-ng
+    clone_dir https://github.com/haiibo/packages luci-theme-opentomcat
+
+    # 晶晨宝盒
+    clone_all https://github.com/ophub/luci-app-amlogic
+    sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/$GITHUB_REPOSITORY'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+    # sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+    sed -i "s|ARMv8|$RELEASE_TAG|g" $destination_dir/luci-app-amlogic/root/etc/config/amlogic
+
     # 修复Makefile路径
     find "$destination_dir" -type f -name "Makefile" | xargs sed -i \
         -e 's?\.\./\.\./\(lang\|devel\)?$(TOPDIR)/feeds/packages/\1?' \
@@ -366,57 +354,50 @@ add_custom_packages() {
 
 # 加载个人设置
 apply_custom_settings() {
-    local drv_path pbuf_path
+    local orig_version
 
     [ -e "$GITHUB_WORKSPACE/files" ] && mv "$GITHUB_WORKSPACE/files" files
 
     # 设置固件rootfs大小
     if [ "$PART_SIZE" ]; then
         sed -i '/ROOTFS_PARTSIZE/d' "$GITHUB_WORKSPACE/$CONFIG_FILE"
-        echo "CONFIG_TARGET_ROOTFS_PARTSIZE=$PART_SIZE" >>"$GITHUB_WORKSPACE/$CONFIG_FILE"
+        echo "CONFIG_TARGET_ROOTFS_PARTSIZE=$PART_SIZE" >> "$GITHUB_WORKSPACE/$CONFIG_FILE"
     fi
 
     # 修改默认ip地址
-    [ "$IP_ADDRESS" ] && sed -i '/lan) ipad/s/".*"/"'"$IP_ADDRESS"'"/' package/base-files/files/bin/config_generate
+    [ "$IP_ADDRESS" ] && sed -i '/lan) ipad/s/".*"/"'"$IP_ADDRESS"'"/' package/base-files/*/bin/config_generate
 
-    # 更改主机名
-    sed -i "s/hostname='.*'/hostname='OpenWrt'/g" package/base-files/files/bin/config_generate
-    
     # 更改默认shell为zsh
     # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
     # ttyd免登录
     sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
-    # 设置root用户密码为password
-    sed -i 's/root:::0:99999:7:::/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.::0:99999:7:::/g' package/base-files/files/etc/shadow
-
-    # 修改连接数
-    sed -i 's/net.netfilter.nf_conntrack_max=.*/net.netfilter.nf_conntrack_max=65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
-    # 修正连接数
-    sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=165535' package/base-files/files/etc/sysctl.conf
-
-    # 自定义默认配置
-    #curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/patch/25.12/10_system.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-    curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/general/25_storage.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
-    #curl -fsSL https://raw.githubusercontent.com/0118Add/Openwrt-CI/main/immortalwrt/29_ports.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
-    #curl -fsSL https://raw.githubusercontent.com/0118Add/build-openwrt/master/scripts/30_network.js > ./feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js
-
-    # comment out the following line to restore the full description
-    sed -i '/# timezone/i grep -q '\''/tmp/sysinfo/model'\'' /etc/rc.local || sudo sed -i '\''/exit 0/i [ "$(cat /sys\\/class\\/dmi\\/id\\/sys_vendor 2>\\/dev\\/null)" = "Default string" ] \&\& echo "x86_64" > \\/tmp\\/sysinfo\\/model'\'' /etc/rc.local\n' package/A/default-settings/default/zzz-default-settings
-    sed -i '/# timezone/i sed -i "s/\\(DISTRIB_DESCRIPTION=\\).*/\\1'\''OpenWrt $(sed -n "s/DISTRIB_DESCRIPTION='\''OpenWrt \\([^ ]*\\) .*/\\1/p" /etc/openwrt_release)'\'',/" /etc/openwrt_release\nsource /etc/openwrt_release \&\& sed -i -e "s/distversion\\s=\\s\\".*\\"/distversion = \\"$DISTRIB_ID $DISTRIB_RELEASE ($DISTRIB_REVISION)\\"/g" -e '\''s/distname    = .*$/distname    = ""/g'\'' /usr/lib/lua/luci/version.lua\nsed -i "s/luciname    = \\".*\\"/luciname    = \\"LuCI openwrt-25.12\\"/g" /usr/lib/lua/luci/version.lua\nsed -i "s/luciversion = \\".*\\"/luciversion = \\"\\"/g" /usr/lib/lua/luci/version.lua\necho "export const revision = '\''\'\'', branch = '\''LuCI openwrt-25.12'\'';" > /usr/share/ucode/luci/version.uc\n/etc/init.d/rpcd restart\n' package/A/default-settings/default/zzz-default-settings
-    #sed -i '/# timezone/i sed -i "s/\\(DISTRIB_DESCRIPTION=\\).*/\\1'\''OpenWrt $(sed -n "s/DISTRIB_DESCRIPTION='\''OpenWrt \\([^ ]*\\) .*/\\1/p" /etc/openwrt_release)'\'',/" /etc/openwrt_release\nsource /etc/openwrt_release \&\& sed -i -e "s/distversion\\s=\\s\\".*\\"/distversion = \\"$DISTRIB_ID $DISTRIB_RELEASE ($DISTRIB_REVISION)\\"/g" -e '\''s/distname    = .*$/distname    = ""/g'\'' /usr/lib/lua/luci/version.lua\nsed -i "s/luciname    = \\".*\\"/luciname    = \\"LuCI openwrt-24.10\\"/g" /usr/lib/lua/luci/version.lua\nsed -i "s/luciversion = \\".*\\"/luciversion = \\"v'$(date +%Y%m%d)'\\"/g" /usr/lib/lua/luci/version.lua\necho "export const revision = '\''v'$(date +%Y%m%d)'\'\'', branch = '\''LuCI openwrt-24.10'\'';" > /usr/share/ucode/luci/version.uc\n/etc/init.d/rpcd restart\n' package/A/default-settings/default/zzz-default-settings
-    curl -fsSL https://raw.githubusercontent.com/0118Add/X86_64-Test/main/patch/release-os > package/base-files/files/etc/os-release
+    # 设置root用户密码为空
+    # sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings 
     
-    rm -rf feeds/packages/net/onionshare-cli
-    sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile
-    
-    # 移除attendedsysupgrade
-    find "feeds/luci/collections" -name "Makefile" | while read -r makefile; do
-        if grep -q "luci-app-attendedsysupgrade" "$makefile"; then
-            sed -i "/luci-app-attendedsysupgrade/d" "$makefile"
-        fi
-    done
+    # 更改argon主题背景
+    cp -f $GITHUB_WORKSPACE/images/bg1.jpg feeds/luci/themes/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
+
+    # x86型号只显示cpu型号
+    sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
+    sed -i "s/'C'/'Core '/g; s/'T '/'Thread '/g" package/lean/autocore/files/x86/autocore
+
+    # 修改版本为编译日期
+    orig_version=$(awk -F "'" '/DISTRIB_REVISION=/{print $2}' package/lean/default-settings/files/zzz-default-settings)
+    sed -i "s/$orig_version/R$(date +%y.%-m.%-d)/g" package/lean/default-settings/files/zzz-default-settings
+
+    # 删除主题默认设置
+    # find $destination_dir/luci-theme-*/ -type f -name '*luci-theme-*' -exec sed -i '/set luci.main.mediaurlbase/d' {} +
+
+    # 调整docker到"服务"菜单
+    # sed -i 's/"admin"/"admin", "services"/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
+    # sed -i 's/"admin"/"admin", "services"/g; s/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
+    # sed -i 's/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
+    # sed -i 's|admin\\|admin\\/services\\|g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/container.htm
+
+    # 取消对samba4的菜单调整
+    # sed -i '/samba4/s/^/#/' package/lean/default-settings/files/zzz-default-settings
 }
 
 # 更新配置文件
@@ -443,15 +424,15 @@ detect_openwrt_arch() {
 }
 
 # 下载openclash运行内核
-#preset_openclash_core() {
-#    CPU_ARCH=$(detect_openwrt_arch ".config")
-#    if [[ "$CPU_ARCH" =~ ^(amd64|arm64|armv7|armv6|armv5|386|mips64|mips64le|riscv64)$ ]] && grep -q "luci-app-openclash=y" .config; then
-#        chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
-#        $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CPU_ARCH
-#    else
-#        return 99
-#    fi
-#}
+preset_openclash_core() {
+    CPU_ARCH=$(detect_openwrt_arch ".config")
+    if [[ "$CPU_ARCH" =~ ^(amd64|arm64|armv7|armv6|armv5|386|mips64|mips64le|riscv64)$ ]] && grep -q "luci-app-openclash=y" .config; then
+        chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
+        $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CPU_ARCH
+    else
+        return 99
+    fi
+}
 
 # 下载zsh终端工具
 preset_shell_tools() {
