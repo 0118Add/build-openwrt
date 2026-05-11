@@ -311,7 +311,7 @@ add_custom_packages() {
     #clone_dir lua https://github.com/sbwml/luci-app-alist luci-app-alist
     #clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     git_clone https://github.com/sbwml/packages_lang_golang golang
-    clone_dir openwrt-24.10 https://github.com/sbwml/feeds_packages_lang_node-prebuilt node
+    clone_dir packages-24.10 https://github.com/sbwml/feeds_packages_lang_node-prebuilt node
     #git_clone lede https://github.com/pymumu/luci-app-smartdns
     #git_clone https://github.com/pymumu/openwrt-smartdns smartdns
     #git_clone https://github.com/ximiTech/luci-app-msd_lite
@@ -330,7 +330,7 @@ add_custom_packages() {
     #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
     #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_dir dev https://github.com/immortalwrt/homeproxy luci-app-homeproxy
+    git_clone dev https://github.com/immortalwrt/homeproxy
     
     # Themes
     #git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
@@ -446,14 +446,14 @@ detect_openwrt_arch() {
 }
 
 # 下载openclash运行内核
-preset_openclash_core() {
-    CPU_ARCH=$(detect_openwrt_arch ".config")
-    if [[ "$CPU_ARCH" =~ ^(amd64|arm64|armv7|armv6|armv5|386|mips64|mips64le|riscv64)$ ]] && grep -q "luci-app-openclash=y" .config; then
-        chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
-        $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CPU_ARCH
-    else
-        return 99
-    fi
+#preset_openclash_core() {
+    #CPU_ARCH=$(detect_openwrt_arch ".config")
+    #if [[ "$CPU_ARCH" =~ ^(amd64|arm64|armv7|armv6|armv5|386|mips64|mips64le|riscv64)$ ]] && grep -q "luci-app-openclash=y" .config; then
+        #chmod +x $GITHUB_WORKSPACE/scripts/preset-clash-core.sh
+        #$GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CPU_ARCH
+    #else
+        #return 99
+    #fi
 }
 
 # 下载zsh终端工具
