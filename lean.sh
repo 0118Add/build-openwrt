@@ -251,9 +251,10 @@ set_variable_values() {
 
     # 内核版本
     KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
+    KERNEL=$(grep -oP 'KERNEL_TESTING_PATCHVER:=\K[\d\.]+' "target/linux/$TARGET_NAME/Makefile")
     KERNEL_VERSION=$(grep -oP 'LINUX_KERNEL_HASH-\K[\d\.]+' "include/kernel-$KERNEL")
     echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
-
+   
     # toolchain缓存文件名
     TOOLS_HASH=$(git log -1 --pretty=format:"%h" tools toolchain)
     CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-cache-$TOOLS_HASH"
