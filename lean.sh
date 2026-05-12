@@ -328,7 +328,7 @@ add_custom_packages() {
     sed -i 's/解除网易云音乐播放限制/音乐解锁/g' feeds/luci/applications/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
     
     # 科学上网插件
-    clone_all https://github.com/fw876/helloworld
+    #clone_all https://github.com/fw876/helloworld
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
     #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
