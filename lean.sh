@@ -337,7 +337,7 @@ add_custom_packages() {
     
     sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
     sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-    sed -i 's/ShadowSocksR Plus+/SSR Plus+/g' package/A/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
+    #sed -i 's/ShadowSocksR Plus+/SSR Plus+/g' package/A/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
     
     # Themes
     #git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
