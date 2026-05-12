@@ -333,8 +333,10 @@ add_custom_packages() {
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
     #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    git_clone dev https://github.com/immortalwrt/homeproxy
+    clone_dir openwrt-25.12 https://github.com/immortalwrt/luci luci-app-homeproxy
     
+    sed -i "s/ImmortalWrt/OpenWrt/g" feeds/luci/applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" feeds/luci/applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
     sed -i 's/ShadowSocksR Plus+/SSR Plus+/g' package/A/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
     
     # Themes
