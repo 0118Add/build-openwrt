@@ -317,6 +317,8 @@ add_custom_packages() {
     #git_clone https://github.com/pymumu/openwrt-smartdns smartdns
     #git_clone https://github.com/ximiTech/luci-app-msd_lite
     #git_clone https://github.com/ximiTech/msd_lite
+    git_clone https://github.com/gdy666/luci-app-lucky
+    git_clone https://github.com/asvow/luci-app-tailscale
     clone_dir openwrt-25.12 https://github.com/immortalwrt/luci luci-app-msd_lite
     clone_dir openwrt-25.12 https://github.com/immortalwrt/packages msd_lite
     
@@ -328,10 +330,12 @@ add_custom_packages() {
     # 科学上网插件
     clone_all https://github.com/fw876/helloworld
     clone_all https://github.com/Openwrt-Passwall/openwrt-passwall-packages
-    #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
+    clone_all https://github.com/Openwrt-Passwall/openwrt-passwall
     #clone_all https://github.com/Openwrt-Passwall/openwrt-passwall2
     clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
     git_clone dev https://github.com/immortalwrt/homeproxy
+    
+    sed -i 's/ShadowSocksR Plus+/SSR Plus+/g' package/A/luci-app-ssr-plus/luasrc/controller/shadowsocksr.lua
     
     # Themes
     #git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
