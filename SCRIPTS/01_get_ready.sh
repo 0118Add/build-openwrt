@@ -30,7 +30,7 @@ openwrt_node_repo="https://github.com/nxhack/openwrt-node-packages.git"
 passwall_pkg_repo="https://github.com/xiaorouji/openwrt-passwall-packages"
 passwall_luci_repo="https://github.com/xiaorouji/openwrt-passwall"
 openwrt_third_repo="https://github.com/jjm2473/openwrt-third"
-dockerman_repo="https://github.com/sbwml/luci-app-dockerman"
+dockerman_repo="https://github.com/lisaac/luci-app-dockerman"
 diskman_repo="https://github.com/lisaac/luci-app-diskman"
 docker_lib_repo="https://github.com/lisaac/luci-lib-docker"
 mosdns_repo="https://github.com/QiuSimons/openwrt-mos"
@@ -51,7 +51,6 @@ xwrt_repo="https://github.com/QiuSimons/openwrt-natflow"
 clone_repo $openwrt_repo $latest_release openwrt &
 #clone_repo $openwrt_repo openwrt-25.12 openwrt &
 clone_repo $openwrt_repo openwrt-25.12 openwrt_snap &
-clone_repo $immortalwrt_repo openwrt-25.12 immortalwrt_25 &
 clone_repo $immortalwrt_repo openwrt-24.10 immortalwrt_24 &
 clone_repo $immortalwrt_repo openwrt-23.05 immortalwrt_23 &
 
