@@ -239,6 +239,8 @@ rm -rf ./package/network/ipv6/odhcp6c
 cp -rf ../openwrt_ma/package/network/ipv6/odhcp6c ./package/network/ipv6/odhcp6c
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
+# 音乐解锁
+sed -i 's/解除网易云音乐播放限制/音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 # 默认开启 Irqbalance
 #sed -i "s/enabled '0'/enabled '1'/g" feeds/packages/utils/irqbalance/files/irqbalance.config
 
