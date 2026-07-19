@@ -96,11 +96,11 @@ jobs:
         latest_release="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/.tar.gz//g' | sed 's/v//g')"
         echo "latest_release=${latest_release}" >>$GITHUB_ENV
 
-    - name: Cache
-      uses: HiGarfield/cachewrtbuild@main
-      with:
-        mixkey: ${{ env.TARGET_DEVICE_ARCH }}
-        prefix: ${{ github.workspace }}/openwrt
+    #- name: Cache
+      #uses: HiGarfield/cachewrtbuild@main
+      #with:
+        #mixkey: ${{ env.TARGET_DEVICE_ARCH }}
+        #prefix: ${{ github.workspace }}/openwrt
 
     - name: Make Download
       working-directory: ${{ github.workspace }}/openwrt
@@ -129,14 +129,15 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact/
-        mv openwrt/bin/targets/rockchip/armv8/*sysupgrade.img* ./artifact/
+        mv openwrt/bin/targets/x86/64/*combined-efi.img* ./artifact/
+        mv openwrt/bin/targets/x86/64/*rootfs.tar.gz* ./artifact/
         cd ./artifact/
         ls -Ahl
         gzip -d *.gz && exit 0
         gzip --best *.img
         ls -Ahl
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz nanopi-r2s-squashfs-sysupgrade.img.gz
-        mv openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-ext4-sysupgrade.img.gz nanopi-r2s-ext4-sysupgrade.img.gz
+        mv openwrt-x86-64-generic-squashfs-combined-efi.img.gz openwrt-x86-64-squashfs-sysupgrade.img.gz
+        mv openwrt-x86-64-generic-rootfs.tar.gz openwrt-x86-64-rootfs.tar.gz
         ls -Ahl
 
     - name: Upload Artifact
