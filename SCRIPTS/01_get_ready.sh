@@ -30,9 +30,9 @@ openwrt_node_repo="https://github.com/nxhack/openwrt-node-packages.git"
 passwall_pkg_repo="https://github.com/xiaorouji/openwrt-passwall-packages"
 passwall_luci_repo="https://github.com/xiaorouji/openwrt-passwall"
 openwrt_third_repo="https://github.com/jjm2473/openwrt-third"
-dockerman_repo="https://github.com/lisaac/luci-app-dockerman"
+#dockerman_repo="https://github.com/lisaac/luci-app-dockerman"
 diskman_repo="https://github.com/lisaac/luci-app-diskman"
-docker_lib_repo="https://github.com/lisaac/luci-lib-docker"
+#docker_lib_repo="https://github.com/lisaac/luci-lib-docker"
 mosdns_repo="https://github.com/QiuSimons/openwrt-mos"
 ssrp_repo="https://github.com/fw876/helloworld"
 zxlhhyccc_repo="https://github.com/zxlhhyccc/bf-package-master"
@@ -59,7 +59,7 @@ clone_repo $lede_pkg_repo master lede_pkg_ma &
 clone_repo $openwrt_repo main openwrt_ma &
 clone_repo $openwrt_pkg_repo master openwrt_pkg_ma &
 clone_repo $openwrt_add_repo master OpenWrt-Add &
-clone_repo $dockerman_repo master dockerman &
+#clone_repo $dockerman_repo master dockerman &
 clone_repo $docker_lib_repo master docker_lib &
 # 等待所有后台任务完成
 wait
