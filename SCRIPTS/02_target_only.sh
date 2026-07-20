@@ -9,7 +9,7 @@ sed -i 's,"eth1" "eth0","eth0" "eth1",g' target/linux/rockchip/armv8/base-files/
 sed -i "s,'eth1' 'eth0','eth0' 'eth1',g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
 
 # 修改默认网关
-sed -i 's/192.168/10.0/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 # 修改主机名
 #sed -i 's/OpenWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 
