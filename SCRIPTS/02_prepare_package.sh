@@ -246,7 +246,7 @@ cp -rf ../openwrt_ma/package/network/ipv6/odhcp6c ./package/network/ipv6/odhcp6c
 # watchcat
 echo > ./feeds/packages/utils/watchcat/files/watchcat.config
 
-# 音乐解锁
+# 后续修改
 rm -rf package/new/imm_pkg/sing-box
 rm -rf package/new/homeproxy
 rm -rf package/new/luci-app-unblockneteasemusic
