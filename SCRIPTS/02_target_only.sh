@@ -14,7 +14,7 @@ sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 #sed -i 's/OpenWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 # 更改固件版本信息
 #sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION=''|g" package/base-files/files/etc/openwrt_release
-#sed -i "s|DISTRIB_DESCRIPTION='.*'|DISTRIB_DESCRIPTION='OpenWrt %V'|g" package/base-files/files/etc/openwrt_release
+sed -i "s|DISTRIB_DESCRIPTION='.*'|DISTRIB_DESCRIPTION='OpenWrt %V'|g" package/base-files/files/etc/openwrt_release
 # 修改 luci version.lua
 sed -i '/luciversion/d' feeds/luci/modules/luci-lua-runtime/luasrc/version.lua
 echo "luciversion = 'LuCI openwrt-25.12 branch'" >> feeds/luci/modules/luci-lua-runtime/luasrc/version.lua
