@@ -12,6 +12,12 @@ sed -i "s,'eth1' 'eth0','eth0' 'eth1',g" target/linux/rockchip/armv8/base-files/
 sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 # 修改主机名
 #sed -i 's/OpenWrt/OpenWrt/g' package/base-files/files/bin/config_generate
+# 更改固件版本信息
+#sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION=''|g" package/base-files/files/etc/openwrt_release
+#sed -i "s|DISTRIB_DESCRIPTION='.*'|DISTRIB_DESCRIPTION='OpenWrt %V'|g" package/base-files/files/etc/openwrt_release
+# 修改 luci version.lua
+sed -i '/luciversion/d' feeds/luci/modules/luci-lua-runtime/luasrc/version.lua
+echo "luciversion = 'LuCI openwrt-25.12 branch'" >> feeds/luci/modules/luci-lua-runtime/luasrc/version.lua
 
 # remove LRNG for 3328
 rm -f target/linux/generic/hack-${KERNEL_VERSION}/696*
