@@ -16,18 +16,18 @@ sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 #sed -i 's/echo.*/echo "$vendor" > \/tmp\/sysinfo\/model/g' target/linux/x86/base-files/lib/preinit/01_sysinfo
 
 # remove LRNG for 3328
-rm -f target/linux/generic/hack-${KERNEL_VERSION}/696*
+#rm -f target/linux/generic/hack-${KERNEL_VERSION}/696*
 
 #Vermagic
-latest_version="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/v//g' | sed 's/.tar.gz//g')"
-wget https://downloads.openwrt.org/releases/${latest_version}/targets/rockchip/armv8/profiles.json
-jq -r '.linux_kernel.vermagic' profiles.json >.vermagic
-sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
+#latest_version="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/v//g' | sed 's/.tar.gz//g')"
+#wget https://downloads.openwrt.org/releases/${latest_version}/targets/rockchip/armv8/profiles.json
+#jq -r '.linux_kernel.vermagic' profiles.json >.vermagic
+#sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
 
 # 预配置一些插件
-cp -rf ../PATCH/files ./files
+#cp -rf ../PATCH/files ./files
 
-find ./ -name *.orig | xargs rm -f
-find ./ -name *.rej | xargs rm -f
+#find ./ -name *.orig | xargs rm -f
+#find ./ -name *.rej | xargs rm -f
 
 #exit 0
